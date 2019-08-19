@@ -6,9 +6,13 @@
 (defn style [in-style]
   [:style (gc/css in-style)])
 
+(defn js [pth]
+  [:script {:src pth}])
+
 (defn layout [title & content]
   (hc/html [:html
             [:head
              [:title title]
              (style scs/main-style)]
-            [:body content]]))
+            [:body content
+             (js "/assets/chat.js")]]))

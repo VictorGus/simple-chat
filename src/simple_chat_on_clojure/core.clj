@@ -4,12 +4,19 @@
             [compojure.route :as route]
             [simple-chat-on-clojure.views :as views]
             [simple-chat-on-clojure.style :as scs]
+            [simple-chat-on-clojure.chat :as scc]
             [garden.core :as gc]))
 
 (defn stat-handler [req]
   {:status  200
    :headers {"Content-Type" "text/html"}
    :body    "hello HTTP!"})
+
+(defn chat [{params :params :as request}]
+  (with-channel request ch
+    (scc/add-new-user ch request)
+    (on-receive ch (fn [msg] (scc/on-msg ch msg)))
+    (on-close ch (fn [st] (scc/remove-user ch)))))
 
 (defn chat-handler [req]
   {:status 200
@@ -21,9 +28,11 @@
                         [:textarea#inp.text-area]])})
 
 (defroutes app-routes
-  (GET "/" [] chat-handler)
-  (GET "/:name" [] chat-handler)
+  (GET "/" [] #'chat-handler)
+  (GET "/:name" [] #'chat-handler)
+  (GET "/chat/:name" [] #'chat)
   (GET "/stat" [] stat-handler)
+  (route/resources "/assets/")
   (route/not-found "This page doesn't exist"))
 
 (defn -main []
