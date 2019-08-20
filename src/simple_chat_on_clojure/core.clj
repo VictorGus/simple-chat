@@ -10,9 +10,11 @@
 (defn stat-handler [req]
   {:status  200
    :headers {"Content-Type" "text/html"}
-   :body    "hello HTTP!"})
+   :body    (views/layout "index"
+                          [:p (str "Amount of users in a chat " (count @scc/users))])})
 
 (defn chat [{params :params :as request}]
+  (println request)
   (with-channel request ch
     (scc/add-new-user ch params)
     (on-receive ch (fn [msg] (scc/on-msg ch msg params)))
@@ -31,7 +33,7 @@
   (GET "/" [] #'chat-handler)
   (GET "/:name" [] #'chat-handler)
   (GET "/chat/:name" [] #'chat)
-  (GET "/stat" [] stat-handler)
+  (GET "/stat/statistic" [] stat-handler)
   (route/resources "/assets/")
   (route/not-found "This page doesn't exist"))
 
