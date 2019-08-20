@@ -5,13 +5,13 @@
 (def users (atom {}))
 
 (defn add-new-user [ch user]
-  (swap! users assoc users ch))
+  (swap! users #(assoc % ch user)))
 
 (defn remove-user [ch]
   (println ch)
   (swap! users dissoc ch))
 
-(defn broadcast [msg]
+(defn broadcast [ch msg]
   (doseq [[ch u] @users]
     (ohs/send! ch msg)))
 
@@ -21,9 +21,9 @@
             [:div.res
              [:pre msg]]]))
 
-(defn on-msg [ch msg]
+(defn on-msg [ch msg params]
   (let [u (get @users ch)
         msg msg]
-    (get @users ch)
     (println msg)
-    (broadcast (format-message u msg))))
+    (println params)
+    (broadcast ch (format-message u msg))))

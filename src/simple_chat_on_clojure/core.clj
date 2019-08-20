@@ -14,8 +14,8 @@
 
 (defn chat [{params :params :as request}]
   (with-channel request ch
-    (scc/add-new-user ch request)
-    (on-receive ch (fn [msg] (scc/on-msg ch msg)))
+    (scc/add-new-user ch params)
+    (on-receive ch (fn [msg] (scc/on-msg ch msg params)))
     (on-close ch (fn [st] (scc/remove-user ch)))))
 
 (defn chat-handler [req]
