@@ -1,4 +1,4 @@
-# Simple chat build with http-kit using WebSockets
+# Simple chat built with http-kit using WebSockets
 
 This chat was made just for fun and Clojure practice.
 
